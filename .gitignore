@@ -6,3 +6,11 @@ snarkjs_example/
 snarkjs_example2/
 
 output/
+
+hash_computation/
+
+circomlib/
+
+keras2circom/
+
+snarkjs/
