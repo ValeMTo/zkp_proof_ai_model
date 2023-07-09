@@ -267,7 +267,6 @@ def compile_code(language, sourcecode, args):
     # Check if the command was successful
     if process.returncode == 0:
         print("Compilation successful!")
-        print("Output:", output.decode())
     else:
         print("Compilation failed.")
         print("Error:", error.decode())
