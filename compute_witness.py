@@ -1,9 +1,11 @@
 """
 Usage:
-  compute_witness.py <input_file>
+  compute_witness.py <input_file> [-o <output>]
 
 Options:
   -h, --help         Show this help message.
+  -o <output> --output=<output>   Directory in which the circuit is [default: output].
+
 
 Arguments:
   <input_file>       Path to the input file.
@@ -18,11 +20,11 @@ def main():
     print("Input file:", input_file)
   
     # Merge JSON files
-    merge_jsons(input_file, 'output/circuit.json', 'output/input_weights.json')
+    merge_jsons(input_file, os.path.join(args['--output'], 'circuit.json'), os.path.join(args['--output'], 'input_weights.json'))
 
     print('Merged input with weights')
 
-    os.chdir('./output/circuit_js')
+    os.chdir(os.path.join(args['--output'], 'circuit_js'))
 
     compile_code('node', 'generate_witness.js', ['circuit.wasm',  '../input_weights.json',  '../witness.wtns'])
     print('Witness generated')
