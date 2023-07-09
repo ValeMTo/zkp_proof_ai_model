@@ -1,8 +1,8 @@
 """
 
 Usage:
-  main.py <model.onnx> [-o <output>] [-v] [--raw]
-  main.py (-h | --help)
+  conversion.py <model.onnx> [-o <output>] [-v] [--raw]
+  conversion.py (-h | --help)
 
 Options:
     -h --help                       Show this screen.
