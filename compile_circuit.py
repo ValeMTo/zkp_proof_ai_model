@@ -6,7 +6,7 @@ Usage:
 
 Options:
     -h --help                       Show this screen.
-    -o <output> --output=<output>   Output directory [default: output].
+    -o <output> --output=<output>   Directory in which the circuit is [default: output].
 """
 
 import utils
