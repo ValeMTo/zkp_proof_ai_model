@@ -1,4 +1,17 @@
+"""
+
+Usage:
+  check_result.py [-o <output>]
+  check_result.py (-h | --help)
+
+Options:
+    -h --help                       Show this screen.
+    -o <output> --output=<output>   Directory in which the circuit is [default: output].
+"""
+
 import json
+from docopt import docopt
+import os
 
 def read_json_file(file_path, circuit_path):
     # Read the JSON file
@@ -37,10 +50,9 @@ def find_word_positions(filename, word):
     
     return positions
 
-def main():
-    output = read_json_file('./output/witness.json', './output/circuit.sym')
-
-    print("Output:", output)
-
 if __name__ == "__main__":
-    main()
+    args = docopt(__doc__)
+    print('Output directory: ' + args['--output'])
+
+    output = read_json_file(os.path.join(args['--output'], 'witness.json'), os.path.join(args['--output'], 'circuit.sym'))
+    print("Output:", output)
