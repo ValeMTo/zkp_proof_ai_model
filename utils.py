@@ -234,30 +234,15 @@ def calculate_hash(merkle_tree_path, weights_path):
     compile_code('node', 'generate_witness.js', ['hash_computation.wasm',  '../flattened_weights.json',  '../witness.wtns'])
 
     #No permission to snarkjs in the docker container
-    """
+ 
     # Move to the parent directory
     os.chdir('../')
-
-    # Create the command to run the hash computation
-    compile_code('snarkjs', 'wtns export json', [ 'hash_computation/witness.wtns', 'hash_computation/witness.json'])
-
-    # Open the witness JSON file
-    with open('witness.json', 'r') as file:
-        file_content = file.read()
-
-    # Parse the file content as a JSON array
-    data = json.loads(file_content)
-
-    # Retrieve the second element
-    hash = data[1]
-        
-    return hash
-
-    """
+    os.chdir('../')
+  
 
 def compile_code(language, sourcecode, args):
     # Define the command to execute
-    command = [language, sourcecode] + args
+    command = [language] + sourcecode.split() + args
 
     # Execute the command and wait for it to complete
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -268,6 +253,6 @@ def compile_code(language, sourcecode, args):
     if process.returncode == 0:
         print("Compilation successful!")
     else:
-        print("Compilation failed.")
+        print("Compilation failed.", output, process.returncode)
         print("Error:", error.decode())
 

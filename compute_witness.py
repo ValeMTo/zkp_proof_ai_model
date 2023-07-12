@@ -27,7 +27,12 @@ def main():
     os.chdir(os.path.join(args['--output'], 'circuit_js'))
 
     compile_code('node', 'generate_witness.js', ['circuit.wasm',  '../input_weights.json',  '../witness.wtns'])
+    os.chdir("../")
+    os.chdir("../")
+
     print('Witness generated')
+    compile_code('snarkjs', 'wtns export json', [ 'output/witness.wtns', 'output/witness.json'])
+
     
 if __name__ == "__main__":
     main()

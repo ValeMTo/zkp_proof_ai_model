@@ -16,40 +16,47 @@ import utils
 from docopt import docopt
 from onnx2circom.onnx2circom.model import Model
 import os 
-
+from utils import compile_code
+import json
 if __name__ == "__main__":
+  args = docopt(__doc__)
+  print('Transpiling model: ' + args['<model.onnx>'])
+  print('Output directory: ' + args['--output'])
+  print('Verbose: ' + str(args['--verbose']))
+  print('Raw: ' + str(args['--raw']))
+  print('\n')
 
-    args = docopt(__doc__)
-    print('Transpiling model: ' + args['<model.onnx>'])
-    print('Output directory: ' + args['--output'])
-    print('Verbose: ' + str(args['--verbose']))
-    print('Raw: ' + str(args['--raw']))
-    print('\n')
+  model = Model(args['<model.onnx>'])
+  model.create_circuit(args['--output'], args['--verbose'], args['--raw']) 
+  print('Model created')
 
-    model = Model(args['<model.onnx>'])
-    model.create_circuit(args['--output'], args['--verbose'], args['--raw']) 
-    print('Model created')
+  num_weights = utils.count_json_values(os.path.join(args['--output'], 'circuit.json'))
+  print('Number of weights: ' + str(num_weights))
 
-    num_weights = utils.count_json_values(os.path.join(args['--output'], 'circuit.json'))
-    print('Number of weights: ' + str(num_weights))
+  markle_tree_path = utils.write_markle_tree(num_weights, args['--output'])
+  print('Merkle tree created in: ' + markle_tree_path)
 
-    markle_tree_path = utils.write_markle_tree(num_weights, args['--output'])
-    print('Merkle tree created in: ' + markle_tree_path)
+  utils.calculate_hash(markle_tree_path,os.path.join(args['--output'], 'circuit.json'))
+  
+  compile_code('snarkjs', 'wtns export json', [ 'hash_computation/witness.wtns', 'hash_computation/witness.json'])
 
-    utils.calculate_hash(markle_tree_path,os.path.join(args['--output'], 'circuit.json'))
+  with open('hash_computation/witness.json', 'r') as file:
+    file_content = file.read()
 
-    #No permission to snarkjs in the docker container
-    """
-    hash = utils.calculate_hash(markle_tree_path,os.path.join(args['--output'], 'circuit.json'))
-    print('Calculated hash: ' + hash)
+  # Parse the file content as a JSON array
+  data = json.loads(file_content)
 
-    utils.add_merkle_tree(os.path.join(args['--output'], 'circuit.circom'),  hash)
-    print('Merkle tree added to circuit')
+  # Retrieve the second element
+  hash = data[1]
+  print('Calculated hash: ' + hash)
 
-    print('Circuit ready to be compiled')
+  utils.add_merkle_tree(os.path.join(args['--output'], 'circuit.circom'),  hash)
+  print('Merkle tree added to circuit')
 
-    utils.compile_circuit(os.path.join(args['--output'], 'circuit.circom'), os.path.join(args['--output'], 'circuit.r1cs'), os.path.join(args['--output'], 'circuit.wasm'))
-    print('Circuit compiled')
-    """
+  print('Circuit ready to be compiled')
+
+  utils.compile_code('circom', os.path.join(args['--output'], 'circuit.circom'), ['--r1cs', '--wasm', '--sym', '-o', 'output','-l', '../'])
+  print('Circuit compiled')
+
 
 
