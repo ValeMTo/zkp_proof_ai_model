@@ -11,7 +11,7 @@ The tool relies on an external repository:
 First, clone the `zkp_proof_ai_model` repository:
 
 ```
-git clone https://github.com/ValeMTo/zkp_proof_ai_model
+git clone https://github.com/ValeMTo/zkp_proof_ai_model.git
 ```
 
 Then, install the dependencies. You can use pip:
@@ -55,22 +55,10 @@ You may need to install additional dependencies due to external libraries. Refer
 ### Circuit setup
 After installing `zkp_proof_ai_model`, its dependencies and the related external libraries, you can convert your ONNX models into Circom circuits and compute hash.
 
-For example, to transpile the model in `model_dense.onnx` into a circom circuit, you can run:
+For example, to transpile the model in `model_dense.onnx` into a circom circuit, calculates witness with snarkjs and updates the circuit with the hash and the template for the hash computation
 
 ```bash
 python conversion.py model_dense.onnx
-```
-Then, calculate witness with snarkjs:
-
-```bash
-cd ./hash_computation
-snarkjs wtns export json witness.wtns witness.json
-cd ../
-```
-and update the circuit with the hash and the template for the hash computation
-
-```bash
-python compile_circuit.py
 ```
 
 The final circom circuit will be in the `output` directory.
@@ -95,13 +83,8 @@ python compute_witness.py input.json
 ```
 export in json the witness with snarkjs:
 
-```bash
-cd ./output
-snarkjs wtns export json witness.wtns witness.json
-cd ../
-```
 then, check the result:
 
 ```bash
-python compute_witness.py input.json
+python check_result.py
 ```
