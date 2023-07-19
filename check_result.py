@@ -1,17 +1,17 @@
 """
 
 Usage:
-  check_result.py [-o <output>]
+  check_result.py <verification_key> <proof> <public> <witness> <circuit>
   check_result.py (-h | --help)
 
 Options:
     -h --help                       Show this screen.
-    -o <output> --output=<output>   Directory in which the circuit is [default: output].
 """
 
 import json
 from docopt import docopt
 import os
+from utils import compile_code
 
 def read_json_file(file_path, circuit_path):
     # Read the JSON file
@@ -52,7 +52,13 @@ def find_word_positions(filename, word):
 
 if __name__ == "__main__":
     args = docopt(__doc__)
-    print('Output directory: ' + args['--output'])
+    ver_key_file = args["<verification_key>"]
+    proof_file = args["<proof>"]
+    public_file = args["<public>"]
+    witness_file = args["<witness>"]
+    circuit_file = args["<circuit>"]
 
-    output = read_json_file(os.path.join(args['--output'], 'witness.json'), os.path.join(args['--output'], 'circuit.sym'))
+    compile_code('snarkjs.cmd', 'plonk verify', [ver_key_file, public_file, proof_file])
+
+    output = read_json_file(witness_file, circuit_file)
     print("Output:", output)
