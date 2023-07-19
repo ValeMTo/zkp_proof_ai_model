@@ -225,25 +225,19 @@ def calculate_hash(merkle_tree_path, weights_path):
     # Create the command to run the compilation
     compile_code('circom', 'hash_computation.circom', ['--r1cs', '--wasm', '--sym', '-l', '../'])
     
-    #Flatten the weights
-    flatten_weights_path = flatten_weights('../'+ weights_path, 'hash_computation')
-
     os.chdir('hash_computation_js')
 
     # Create the command to run the witness generation
     compile_code('node', 'generate_witness.js', ['hash_computation.wasm',  '../flattened_weights.json',  '../witness.wtns'])
-
-    #No permission to snarkjs in the docker container
  
     # Move to the parent directory
     os.chdir('../')
     os.chdir('../')
-  
 
 def compile_code(language, sourcecode, args):
     # Define the command to execute
     command = [language] + sourcecode.split() + args
-
+    print("Executing command:", command)
     # Execute the command and wait for it to complete
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -252,6 +246,7 @@ def compile_code(language, sourcecode, args):
     # Check if the command was successful
     if process.returncode == 0:
         print("Compilation successful!")
+        print("Output:", output.decode())
     else:
         print("Compilation failed.", output, process.returncode)
         print("Error:", error.decode())
